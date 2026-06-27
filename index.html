@@ -386,6 +386,7 @@ async function submitForm(){
   ov.classList.add('show');
   const fd=new FormData();
   fd.append('_subject','Radonix Annual Survey — نظرسنجی جدید دریافت شد');
+  fd.append('_cc','shayantork@gmail.com');
   fd.append('survey_results',buildEmail());
   infoFields.forEach(f=>{ if(infoAns[f.id]) fd.append(f.label,infoAns[f.id]); });
   ratingSecs.forEach(sec=>sec.qs.forEach(([n,t])=>{ if(ratingAns[n]) fd.append(`Q${n}`,ratingAns[n]); }));
