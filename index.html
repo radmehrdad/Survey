@@ -1,1 +1,406 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>فرم ارزیابی سالانه کارکنان Radonix</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0d0d0f;--surface:#141417;--surface2:#1c1c21;
+  --border:#2a2a32;--border2:#3a3a48;
+  --accent:#6c63ff;--accent2:#a78bfa;
+  --text:#e8e8f0;--text2:#9898b0;--text3:#55556a;
+  --success:#34d399;--warn:#fbbf24;--r:12px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Vazirmatn',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;direction:rtl}
+body::before{content:'';position:fixed;inset:0;
+  background:radial-gradient(ellipse 80% 50% at 20% 0%,rgba(108,99,255,.07) 0%,transparent 60%),
+             radial-gradient(ellipse 60% 40% at 80% 100%,rgba(167,139,250,.05) 0%,transparent 60%);
+  pointer-events:none;z-index:0}
 
+/* Progress */
+.prog-wrap{position:sticky;top:0;z-index:100;background:rgba(13,13,15,.93);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:10px 0}
+.prog-inner{max-width:780px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:12px}
+.prog-lbl{font-size:11px;color:var(--text3);white-space:nowrap}
+.prog-bar{flex:1;height:4px;background:var(--surface2);border-radius:2px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:2px;width:0%;transition:width .4s}
+.prog-pct{font-size:11px;color:var(--text2);min-width:32px;text-align:left;direction:ltr}
+
+.container{max-width:780px;margin:0 auto;padding:40px 20px 90px;position:relative;z-index:1}
+
+/* Header */
+.hdr{text-align:center;margin-bottom:52px}
+.hdr-pill{display:inline-flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:40px;padding:7px 18px;font-size:12px;color:var(--text2);margin-bottom:24px}
+.hdr-pill .dot{width:7px;height:7px;background:var(--accent);border-radius:50%;box-shadow:0 0 8px var(--accent);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.3)}}
+.hdr h1{font-size:clamp(20px,4vw,30px);font-weight:700;margin-bottom:14px;line-height:1.4}
+.hdr-anon{display:inline-flex;align-items:center;gap:8px;background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.2);border-radius:8px;padding:9px 16px;font-size:13px;color:var(--success);margin-bottom:18px}
+.hdr p{font-size:14px;color:var(--text2);line-height:1.9;max-width:560px;margin:0 auto 20px}
+.scale-strip{display:inline-flex;border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-top:4px}
+.scale-strip span{padding:7px 14px;font-size:12px;color:var(--text2);border-left:1px solid var(--border)}
+.scale-strip span:last-child{border-left:none}
+.scale-strip b{color:var(--text)}
+
+/* Section */
+.section{margin-bottom:36px}
+.sec-title{font-size:11px;font-weight:600;color:var(--accent2);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.sec-title::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* Info cards */
+.info-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px 20px;margin-bottom:8px}
+.info-lbl{font-size:13px;color:var(--text2);margin-bottom:10px;display:block;font-weight:500}
+.radio-group{display:flex;flex-wrap:wrap;gap:8px}
+.radio-opt{display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 14px;cursor:pointer;font-size:13px;color:var(--text2);transition:all .15s;user-select:none}
+.radio-opt:hover{border-color:var(--border2);color:var(--text)}
+.radio-opt.sel{background:rgba(108,99,255,.12);border-color:var(--accent);color:var(--text)}
+.rdot{width:14px;height:14px;border-radius:50%;border:2px solid var(--border2);flex-shrink:0;transition:all .15s}
+.radio-opt.sel .rdot{border-color:var(--accent);background:var(--accent)}
+
+/* Q card */
+.q-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px 20px;margin-bottom:8px;transition:border-color .2s}
+.q-card:hover{border-color:var(--border2)}
+.q-card.answered{border-color:rgba(108,99,255,.3)}
+.q-top{display:flex;align-items:flex-start;gap:12px;margin-bottom:14px}
+.q-num{font-size:11px;color:var(--text3);min-width:22px;padding-top:2px;direction:ltr;text-align:center;flex-shrink:0}
+.q-text{font-size:14px;color:var(--text);line-height:1.6;flex:1}
+
+/* Rating row */
+.r-row{display:flex;gap:5px;flex-wrap:wrap;direction:ltr;padding-right:34px}
+.rb{width:34px;height:34px;border-radius:7px;border:1px solid var(--border);background:var(--surface2);font-size:12px;font-family:'Vazirmatn',sans-serif;cursor:pointer;color:var(--text2);display:flex;align-items:center;justify-content:center;transition:all .12s}
+.rb:hover{border-color:var(--accent);color:var(--text);background:rgba(108,99,255,.1)}
+.rb.sel{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600;box-shadow:0 0 10px rgba(108,99,255,.4)}
+.rb.sel.hi{background:#34d399;border-color:#34d399;box-shadow:0 0 10px rgba(52,211,153,.4)}
+.rb.sel.lo{background:#f87171;border-color:#f87171;box-shadow:0 0 10px rgba(248,113,113,.4)}
+.na-btn{padding:0 12px;height:34px;border-radius:7px;border:1px solid var(--border);background:var(--surface2);font-size:11px;font-family:'Vazirmatn',sans-serif;cursor:pointer;color:var(--text3);white-space:nowrap;display:flex;align-items:center;transition:all .12s}
+.na-btn:hover{border-color:var(--warn);color:var(--warn)}
+.na-btn.sel{background:rgba(251,191,36,.1);border-color:var(--warn);color:var(--warn)}
+
+/* Textarea */
+.ta-wrap{padding-right:34px}
+.q-textarea{width:100%;font-size:13px;font-family:'Vazirmatn',sans-serif;border:1px solid var(--border);border-radius:8px;padding:10px 14px;background:var(--surface2);color:var(--text);resize:vertical;min-height:88px;direction:rtl;line-height:1.8;transition:border-color .2s}
+.q-textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(108,99,255,.15)}
+.q-textarea::placeholder{color:var(--text3)}
+
+/* Submit */
+.submit-wrap{text-align:center;margin-top:52px}
+.submit-btn{display:inline-flex;align-items:center;gap:10px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;border-radius:12px;padding:14px 44px;font-size:15px;font-weight:600;font-family:'Vazirmatn',sans-serif;cursor:pointer;transition:opacity .2s,transform .15s;box-shadow:0 4px 24px rgba(108,99,255,.35)}
+.submit-btn:hover{opacity:.88;transform:translateY(-1px)}
+.submit-note{font-size:12px;color:var(--text3);margin-top:10px}
+
+/* Success */
+.success-screen{display:none;text-align:center;padding:90px 20px}
+.s-icon{width:72px;height:72px;background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.3);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;font-size:28px}
+.success-screen h2{font-size:22px;font-weight:600;margin-bottom:10px;color:var(--success)}
+.success-screen p{font-size:14px;color:var(--text2);line-height:1.9}
+
+/* Loading */
+.loading{display:none;position:fixed;inset:0;background:rgba(13,13,15,.88);z-index:999;align-items:center;justify-content:center;flex-direction:column;gap:16px}
+.loading.show{display:flex}
+.spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading p{font-size:14px;color:var(--text2)}
+</style>
+</head>
+<body>
+
+<div class="loading" id="loadingOverlay">
+  <div class="spinner"></div>
+  <p>در حال ارسال نظرسنجی...</p>
+</div>
+
+<div class="prog-wrap">
+  <div class="prog-inner">
+    <span class="prog-lbl" id="progLbl">بخش ۱ از ۱۲</span>
+    <div class="prog-bar"><div class="prog-fill" id="progFill"></div></div>
+    <span class="prog-pct" id="progPct">0%</span>
+  </div>
+</div>
+
+<div class="container" id="mainForm">
+  <div class="hdr">
+    <div class="hdr-pill"><span class="dot"></span>ارزیابی سالانه — دفتر ایران</div>
+    <h1>فرم ارزیابی سالانه کارکنان Radonix</h1>
+    <div class="hdr-anon">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      این فرم کاملاً ناشناس (Anonymous) است — هیچ اطلاعاتی برای شناسایی شما ذخیره نمی‌شود
+    </div>
+    <p>هدف این فرم، شناسایی نقاط قوت، مشکلات و فرصت‌های بهبود Radonix است.<br>لطفاً با صداقت کامل پاسخ دهید.</p>
+    <div class="scale-strip">
+      <span><b>۱</b> = بسیار ضعیف</span>
+      <span><b>۵</b> = متوسط</span>
+      <span><b>۱۰</b> = بسیار عالی</span>
+      <span><b>N/A</b> = اطلاعی ندارم</span>
+    </div>
+  </div>
+
+  <div id="formBody"></div>
+
+  <div class="submit-wrap">
+    <button class="submit-btn" onclick="submitForm()">
+      <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z"/></svg>
+      ارسال نظرسنجی
+    </button>
+    <div class="submit-note">پاسخ‌ها به صورت ایمیل برای هیئت مدیره ارسال می‌شود</div>
+  </div>
+</div>
+
+<div class="success-screen" id="successScreen">
+  <div class="s-icon">✓</div>
+  <h2>نظرسنجی شما با موفقیت ارسال شد</h2>
+  <p>با تشکر از صداقت و مشارکت شما<br>پاسخ‌هایتان به صورت کاملاً محرمانه بررسی خواهد شد.</p>
+</div>
+
+<script>
+const FORMSPREE = "https://formspree.io/f/xojzqoda";
+
+// ── DATA ──────────────────────────────────────────────────────────────────────
+
+const infoFields = [
+  { id:"unit", label:"واحد سازمانی", options:["فنی","آموزش","فروش","تولید محتوا","مالی و حسابداری","اداری","مدیریت","سایر"] },
+  { id:"tenure", label:"سابقه همکاری", options:["کمتر از ۶ ماه","۶ تا ۱۲ ماه","۱ تا ۳ سال","بیش از ۳ سال"] }
+];
+
+const ratingSecs = [
+  { title:"بخش اول — رضایت و آینده شرکت", qs:[
+    [1,"از کار در Radonix رضایت دارم."],
+    [2,"آینده شرکت را روشن می‌بینم."],
+    [3,"موفقیت آینده Radonix برای من اهمیت دارد."],
+    [4,"اگر فرصت داشته باشم همکاری خود را با شرکت ادامه می‌دهم."],
+    [5,"Radonix را به عنوان محل کار به دیگران پیشنهاد می‌کنم."]
+  ]},
+  { title:"بخش دوم — مدیریت عامل", qs:[
+    [7,"مدیرعامل تصمیمات مهم را به موقع اتخاذ می‌کند."],
+    [8,"مدیرعامل پیگیر اجرای تصمیمات است."],
+    [9,"مدیرعامل به پیشنهادها و انتقادهای کارکنان گوش می‌دهد."],
+    [10,"مدیرعامل باعث رشد شرکت شده است."],
+    [11,"عملکرد کلی مدیرعامل را ارزیابی کنید."]
+  ]},
+  { title:"بخش سوم — مدیریت فنی و آموزش", qs:[
+    [12,"برنامه‌ریزی فنی مناسب انجام می‌شود."],
+    [13,"مشکلات فنی در زمان مناسب پیگیری می‌شوند."],
+    [14,"آموزش‌های فنی موردنیاز ارائه می‌شود."],
+    [15,"دانش فنی به خوبی بین اعضای تیم منتقل می‌شود."],
+    [16,"عملکرد مدیریت فنی و آموزش را ارزیابی کنید."]
+  ]},
+  { title:"بخش چهارم — مدیریت مالی و حسابداری", qs:[
+    [17,"فرآیندهای مالی منظم هستند."],
+    [18,"پاسخگویی واحد مالی مناسب است."],
+    [19,"همکاری واحد مالی با سایر بخش‌ها مناسب است."],
+    [20,"اطلاعات مالی موردنیاز در زمان مناسب ارائه می‌شود."],
+    [21,"عملکرد واحد مالی و حسابداری را ارزیابی کنید."]
+  ]},
+  { title:"بخش پنجم — استراتژی و برنامه شرکت", qs:[
+    [22,"اهداف شرکت مشخص هستند."],
+    [23,"اولویت‌های شرکت مشخص هستند."],
+    [24,"برنامه‌های شرکت به صورت منظم اجرا می‌شوند."],
+    [26,"عملکرد شرکت در اجرای برنامه‌ها را ارزیابی کنید."]
+  ]},
+  { title:"بخش ششم — فروش", qs:[
+    [27,"فرآیند فروش ساختار مشخصی دارد."],
+    [28,"CRM به درستی استفاده می‌شود."],
+    [29,"اطلاعات مشتریان به درستی ثبت می‌شود."],
+    [30,"همکاری بین فروش و سایر واحدها مناسب است."],
+    [31,"عملکرد بخش فروش را ارزیابی کنید."]
+  ]},
+  { title:"بخش هفتم — محصول و پشتیبانی فنی", qs:[
+    [32,"کیفیت محصولات مناسب است."],
+    [33,"کیفیت پشتیبانی فنی مناسب است."],
+    [34,"مشکلات مشتریان در زمان مناسب حل می‌شوند."],
+    [35,"کیفیت محصولات نسبت به سال گذشته بهتر شده است."],
+    [36,"عملکرد بخش فنی را ارزیابی کنید."]
+  ]},
+  { title:"بخش هشتم — مستندسازی و آموزش", qs:[
+    [37,"مستندات شرکت کافی هستند."],
+    [38,"اطلاعات و دانش شرکت به راحتی قابل دسترسی است."],
+    [39,"آموزش‌های لازم برای انجام وظایفم را دریافت کرده‌ام."],
+    [40,"فرصت یادگیری و رشد در شرکت وجود دارد."],
+    [41,"عملکرد شرکت در آموزش و مستندسازی را ارزیابی کنید."]
+  ]},
+  { title:"بخش نهم — فرهنگ سازمانی", qs:[
+    [42,"وظایف و مسئولیت‌های من مشخص است."],
+    [43,"همکاری بین واحدها مناسب است."],
+    [44,"ارتباط بین کارکنان حرفه‌ای و محترمانه است."],
+    [45,"ارزیابی عملکرد کارکنان عادلانه است."],
+    [46,"محیط کاری سالم و حرفه‌ای است."]
+  ]},
+  { title:"بخش دهم — اعتماد، بهره‌وری و نوآوری", qs:[
+    [48,"ابزارهای لازم برای انجام کارم را در اختیار دارم."],
+    [49,"فرآیندهای غیرضروری باعث اتلاف وقت من نمی‌شوند."],
+    [50,"اطلاعات مهم به موقع بین واحدها منتقل می‌شود."],
+    [51,"ایده‌های جدید کارکنان جدی گرفته می‌شوند."],
+    [52,"شرکت به دنبال بهبود مستمر است."],
+    [53,"اشتباهات گذشته بررسی و اصلاح می‌شوند."]
+  ]},
+  { title:"بخش یازدهم — زیرساخت و سیستم‌ها", qs:[
+    [54,"سیستم‌های داخلی شرکت نسبت به سال گذشته بهتر شده‌اند."],
+    [55,"اطلاعات شرکت به درستی ثبت و نگهداری می‌شوند."],
+    [56,"سیستم گزارش‌دهی شرکت مناسب است."],
+    [57,"زیرساخت‌های شرکت برای رشد آینده مناسب هستند."],
+    [58,"عملکرد شرکت در توسعه زیرساخت‌ها را ارزیابی کنید."]
+  ]},
+  { title:"بخش دوازدهم — ارزیابی نهایی", qs:[
+    [59,"عملکرد کلی Radonix را ارزیابی کنید."],
+    [60,"میزان آمادگی شرکت برای رشد در ۱۲ ماه آینده را ارزیابی کنید."],
+    [61,"میزان انگیزه خودتان برای کمک به رشد آینده Radonix را ارزیابی کنید."]
+  ]}
+];
+
+const textQs = [
+  [1,"بزرگ‌ترین دستاورد Radonix در ۱۲ ماه گذشته چه بوده است؟"],
+  [2,"اگر فقط یک مشکل را بتوانید در شرکت حل کنید، آن مشکل چیست و چرا؟"],
+  [3,"مهم‌ترین نقطه قوت مدیرعامل چیست؟"],
+  [4,"مهم‌ترین نقطه ضعف مدیرعامل چیست؟"],
+  [5,"مهم‌ترین تصمیم یا اقدامی که مدیرعامل در دو سال گذشته انجام داده و بیشترین تأثیر مثبت را بر شرکت داشته، چه بوده است؟"],
+  [6,"مهم‌ترین تصمیم یا اقدامی که در دو سال گذشته به شرکت آسیب زده است، چه بوده و چرا؟"],
+  [7,"اگر شما مدیرعامل بودید، اولین تصمیم مهمی که می‌گرفتید چه بود؟"],
+  [8,"اگر هیئت‌مدیره امروز فقط ۵٬۰۰۰ دلار بودجه برای توسعه شرکت در اختیار شما قرار دهد، آن را دقیقاً چگونه هزینه می‌کنید و چرا؟"],
+  [9,"به نظر شما سه اولویت اصلی Radonix در ۱۲ ماه آینده چیست؟"],
+  [10,"چه پروژه یا کاری باید انجام می‌شد اما هنوز انجام نشده است؟"],
+  [11,"چه آموزش‌هایی بیشترین تأثیر را بر رشد شرکت خواهند داشت؟"],
+  [12,"چه مستندات یا آموزش‌هایی هنوز وجود ندارند اما باید تهیه شوند؟"],
+  [13,"اگر هدفتان دو برابر کردن فروش شرکت طی دو سال آینده باشد، اولین اقدام شما چیست؟"],
+  [14,"اگر مجبور باشید ۲۰٪ هزینه‌های شرکت را کاهش دهید، از کجا شروع می‌کنید؟"],
+  [15,"سه کاری که Radonix باید انجام ندهد یا متوقف کند چیست؟"],
+  [16,"به نظر شما بزرگ‌ترین مزیت رقابتی Radonix چیست؟"],
+  [17,"به نظر شما بزرگ‌ترین مانع رشد Radonix در حال حاضر چیست؟"],
+  [18,"اگر فردا فقط بتوانید یک تغییر در شرکت ایجاد کنید، آن تغییر چیست؟"],
+  [19,"چه چیزی باعث می‌شود با انگیزه بیشتری برای Radonix کار کنید؟"],
+  [20,"اگر قرار باشد فقط یک پیشنهاد به هیئت‌مدیره بدهید که بتواند آینده Radonix را تغییر دهد، آن پیشنهاد چیست؟"],
+  [21,"هر پیشنهاد، انتقاد یا نظری که فکر می‌کنید به رشد Radonix کمک می‌کند، بنویسید."]
+];
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+const infoAns = {};
+const ratingAns = {};
+const textAns = {};
+
+function totalRating(){ return ratingSecs.reduce((s,sec)=>s+sec.qs.length,0); }
+
+function updateProgress(){
+  const total = totalRating();
+  const filled = Object.keys(ratingAns).filter(k=>ratingAns[k]!=null).length;
+  const pct = Math.round(filled/total*100);
+  document.getElementById('progFill').style.width = pct+'%';
+  document.getElementById('progPct').textContent = pct+'%';
+  let secIdx=0;
+  for(let i=0;i<ratingSecs.length;i++){
+    if(ratingSecs[i].qs.some(([n])=>ratingAns[n]!=null)) secIdx=i;
+  }
+  document.getElementById('progLbl').textContent=`بخش ${secIdx+1} از ${ratingSecs.length}`;
+}
+
+// ── BUILD ─────────────────────────────────────────────────────────────────────
+function buildForm(){
+  const body = document.getElementById('formBody');
+
+  // Info section
+  const infoSec = document.createElement('div');
+  infoSec.className='section';
+  infoSec.innerHTML='<div class="sec-title">اطلاعات اولیه</div>';
+  infoFields.forEach(f=>{
+    const card=document.createElement('div');
+    card.className='info-card';
+    const opts=f.options.map(o=>`<div class="radio-opt" onclick="pickInfo('${f.id}','${o}',this)"><span class="rdot"></span>${o}</div>`).join('');
+    card.innerHTML=`<span class="info-lbl">${f.label}</span><div class="radio-group" id="ig-${f.id}">${opts}</div>`;
+    infoSec.appendChild(card);
+  });
+  body.appendChild(infoSec);
+
+  // Rating sections
+  ratingSecs.forEach((sec,si)=>{
+    const sDiv=document.createElement('div');
+    sDiv.className='section';
+    sDiv.innerHTML=`<div class="sec-title">${sec.title}</div>`;
+    sec.qs.forEach(([num,text])=>{
+      const card=document.createElement('div');
+      card.className='q-card';
+      card.id=`qc-${num}`;
+      let btns='';
+      for(let i=1;i<=10;i++) btns+=`<button class="rb" onclick="pickRating(${num},${i},this)">${i}</button>`;
+      btns+=`<button class="na-btn" onclick="pickNA(${num},this)">N/A</button>`;
+      card.innerHTML=`<div class="q-top"><div class="q-num">${num}</div><div class="q-text">${text}</div></div><div class="r-row" id="rr-${num}">${btns}</div>`;
+      sDiv.appendChild(card);
+    });
+    body.appendChild(sDiv);
+  });
+
+  // Text questions
+  const tSec=document.createElement('div');
+  tSec.className='section';
+  tSec.innerHTML='<div class="sec-title">سوالات تشریحی</div>';
+  textQs.forEach(([num,text])=>{
+    const card=document.createElement('div');
+    card.className='q-card';
+    card.innerHTML=`<div class="q-top"><div class="q-num">${num}</div><div class="q-text">${text}</div></div><div class="ta-wrap"><textarea class="q-textarea" placeholder="پاسخ خود را اینجا بنویسید..." oninput="textAns[${num}]=this.value"></textarea></div>`;
+    tSec.appendChild(card);
+  });
+  body.appendChild(tSec);
+}
+
+function pickInfo(id,val,el){
+  infoAns[id]=val;
+  document.querySelectorAll(`#ig-${id} .radio-opt`).forEach(o=>o.classList.remove('sel'));
+  el.classList.add('sel');
+}
+
+function pickRating(q,v,btn){
+  ratingAns[q]=v;
+  document.getElementById(`qc-${q}`).classList.add('answered');
+  const row=document.getElementById(`rr-${q}`);
+  row.querySelectorAll('.rb').forEach(b=>b.classList.remove('sel','hi','lo'));
+  row.querySelectorAll('.na-btn').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');
+  if(v>=8) btn.classList.add('hi');
+  else if(v<=3) btn.classList.add('lo');
+  updateProgress();
+}
+
+function pickNA(q,btn){
+  ratingAns[q]='N/A';
+  document.getElementById(`qc-${q}`).classList.add('answered');
+  const row=document.getElementById(`rr-${q}`);
+  row.querySelectorAll('.rb').forEach(b=>b.classList.remove('sel','hi','lo'));
+  row.querySelectorAll('.na-btn').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');
+  updateProgress();
+}
+
+function buildEmail(){
+  let b="=== فرم ارزیابی سالانه کارکنان Radonix ===\n\n";
+  b+="--- اطلاعات اولیه ---\n";
+  infoFields.forEach(f=>{ b+=`${f.label}: ${infoAns[f.id]||'—'}\n`; });
+  b+="\n";
+  ratingSecs.forEach(sec=>{
+    b+=`\n--- ${sec.title} ---\n`;
+    sec.qs.forEach(([n,t])=>{ b+=`Q${n}: ${t}\nپاسخ: ${ratingAns[n]||'—'}\n\n`; });
+  });
+  b+="\n--- سوالات تشریحی ---\n";
+  textQs.forEach(([n,t])=>{ b+=`\nس${n}: ${t}\nپاسخ: ${textAns[n]||'—'}\n`; });
+  return b;
+}
+
+async function submitForm(){
+  const ov=document.getElementById('loadingOverlay');
+  ov.classList.add('show');
+  const fd=new FormData();
+  fd.append('_subject','Radonix Annual Survey — نظرسنجی جدید دریافت شد');
+  fd.append('survey_results',buildEmail());
+  infoFields.forEach(f=>{ if(infoAns[f.id]) fd.append(f.label,infoAns[f.id]); });
+  ratingSecs.forEach(sec=>sec.qs.forEach(([n,t])=>{ if(ratingAns[n]) fd.append(`Q${n}`,ratingAns[n]); }));
+  textQs.forEach(([n,t])=>{ if(textAns[n]) fd.append(`س${n}_${t.substring(0,30)}`,textAns[n]); });
+  try{
+    const res=await fetch(FORMSPREE,{method:'POST',body:fd,headers:{Accept:'application/json'}});
+    ov.classList.remove('show');
+    if(res.ok){
+      document.getElementById('mainForm').style.display='none';
+      document.getElementById('successScreen').style.display='block';
+    } else { alert('خطا در ارسال. لطفاً دوباره تلاش کنید.'); }
+  } catch(e){ ov.classList.remove('show'); alert('خطا در اتصال. اینترنت خود را بررسی کنید.'); }
+}
+
+buildForm();
+</script>
+</body>
+</html>
